@@ -1,6 +1,0 @@
-name: Merged REMAGE
-
-on:
-  push:
-    branches:
-      - REMAGE
