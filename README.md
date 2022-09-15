@@ -1,9 +1,9 @@
 <h1 align="center">IT IS UNDER DEVELOPMENT</h1>
 
-## This Project Build Only Using [html, css & js]
+## This Project Build Only Using [html, CSS & JAVASCRIPT]
 
 ## CREATED [Success==YES] || MISSING [Unsuccess==NO]::
-### 01] Position auto center [YES]
+### 01] Position auto CENTER [YES]
 ### 02] On page resize cropper-properties are responsive [YES]
 ### 03] Cropper-container moveable (mouse-move)[YES] (touch-drag)[NO]
 ### 04] Cropper-container resizable [NO]
