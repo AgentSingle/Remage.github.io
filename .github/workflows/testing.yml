@@ -6,7 +6,7 @@ on:
       - REMAGE
 
 jobs:
-  hello_world_job:
+  build:
     runs-on: ubuntu-latest
     name: A job to say hello
     steps:
