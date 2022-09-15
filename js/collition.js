@@ -5,9 +5,6 @@ let Image = document.querySelector('.Image_Rect');
 let Image_rect = Image.getBoundingClientRect();
 let imgTouchX, imgTouchY, imgMoveX = 0, imgMoveY = 0;
 let rotation = 0;
-let degtorad=Math.PI/180;
-var x = Math.cos(degtorad * (135+rotation));
-var y = Math.sin(degtorad * (135+rotation));
 Image.style.transform = `rotateZ(${rotation}deg)`;
 
 let Cropper = document.querySelector('.Cropper_Rect');
