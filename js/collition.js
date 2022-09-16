@@ -1,3 +1,5 @@
+let AspectRatio = 16/12
+
 let background = document.querySelector('.Background_Rect');
 let background_rect = background.getBoundingClientRect();
 
@@ -8,9 +10,19 @@ let rotation = 0;
 Image.style.transform = `rotateZ(${rotation}deg)`;
 
 let Cropper = document.querySelector('.Cropper_Rect');
+const CropperSize = ()=>{
+    Cropper.style.width = `${200}px`;
+    Cropper.style.height = `${200*AspectRatio}px`;
+}
+CropperSize();
+
 let Cropper_rect = Cropper.getBoundingClientRect();
 let cropperTouchX, cropperTouchY, cropperMoveX = 0, cropperMoveY = 0;
+
 // Cropper.style.transform = `rotateZ(${-rotation}deg)`;
+
+let pointer_rect = document.querySelector('.pointer_rect');
+console.warn(pointer_rect)
 
 
 let IsCropperMoving = false;
@@ -44,23 +56,18 @@ if (Image_rect.top > background_rect.top){
 // TO ADJUSTING CROPPER HEIGHT WIDTH REQUIRE CONSTANTS AND VARIABLES
 let IsResizing = false;
 let InitialLeftCropper = Cropper_rect.left,
-    InitialRightCropper = Cropper_rect.right, 
-    CropperInitialWidth = 200,
-    CropperInitialHeight = 200;
+    InitialRightCropper = Cropper_rect.right,
+    CRIW_during_movement = Cropper_rect.width,
+    CRIH_during_movement = Cropper_rect.height;
 
 let FinalLeftCropper = Cropper_rect.left, 
-    FinalRightCropper = Cropper_rect.right,
-    CropperFinalWidth = Cropper_rect.width,
-    CropperFinalHeight = Cropper_rect.height;
+    FinalRightCropper = Cropper_rect.right;
 
-let AdjustCropperWidth = CropperInitialWidth, AdjustCropperHeight = CropperInitialHeight;
-if (CropperInitialWidth != CropperFinalWidth){
-    AdjustCropperWidth = CropperFinalWidth;
-}
-if (CropperInitialHeight != CropperFinalHeight){
-    AdjustCropperHeight = CropperFinalHeight;
-}
+let lastResidersMoveX = 0;
 
+let resizeWidth = 0, 
+    BackgroundCenterX = (background_rect.left+background_rect.width/2),
+    CropperCenterX = (Cropper_rect.left + Cropper_rect.width/2);
 
 
 
@@ -107,16 +114,19 @@ function cropperMouseDown(e){
 const detect_cropper_collision = (cropperMoveX, cropperMoveY)=>{
 
     cropperMoveX = Math.min(
-        Math.max(cropperMoveX, (AdjustCropperWidth/2 - moveable_area_width/2)), ((moveable_area_right - moveable_area_left) - (moveable_area_width + Cropper_rect.width)/2)
+        Math.max(cropperMoveX, (CRIW_during_movement/2 - moveable_area_width/2)), ((moveable_area_right - moveable_area_left) - (moveable_area_width + CRIW_during_movement)/2)
     );
     cropperMoveY = Math.min(
-        Math.max(cropperMoveY, (AdjustCropperHeight/2 - moveable_area_height/2)), ((moveable_area_bottom - moveable_area_top) - (moveable_area_height + Cropper_rect.height)/2)
+        Math.max(cropperMoveY, (CRIH_during_movement/2 - moveable_area_height/2)), ((moveable_area_bottom - moveable_area_top) - (moveable_area_height + CRIH_during_movement)/2)
     );
     // Cropper.style.transform = `rotateZ(${-rotation}deg) translate(${cropperMoveX}px, ${cropperMoveY}px) `;
     Cropper.style.transform = `translate(${cropperMoveX}px, ${cropperMoveY}px) `;
     /* INITIALIZE CROPPER LEFT POSITION */
     InitialLeftCropper = Cropper_rect.left + cropperMoveX;
     InitialRightCropper = Cropper_rect.right + cropperMoveX;
+    FinalLeftCropper = InitialLeftCropper
+
+    console.warn(InitialLeftCropper)
 }
 
 
@@ -175,12 +185,14 @@ for (let resider of residers){
     resider.addEventListener('mousedown', residersMouseEvent);
 
     function residersMouseEvent(e){
-        // e.preventDefault();
+        e.preventDefault();
 
         let thisResider = e.target;
 
         residersTouchX = e.clientX;
         residersTouchY = e.clientY;
+
+        // console.warn(e.clientX, e.clientY)
 
         window.addEventListener('mousemove', mousemove);
         window.addEventListener('mouseup', mouseup);
@@ -188,33 +200,51 @@ for (let resider of residers){
         function mousemove(event){
             IsCropperMoving = false;
             IsResizing = true;
-            residersMoveX = event.clientX - residersTouchX;
-            residersMoveY = event.clientY - residersTouchY;
+            let residersMoveX = event.clientX - residersTouchX;
+            let residersMoveY = event.clientY - residersTouchY;
+            lastResidersMoveX = lastResidersMoveX + residersMoveX;
+
 
             if (IsResizing==true){
+                
+                console.warn(moveable_area_left, FinalLeftCropper)
+                // CropperCenter = (InitialLeftCropper + Cropper_rect.width/2);
+                // if (BackgroundCenter>=CropperCenter){
+                //     resizeWidth = (moveable_area_right - (InitialLeftCropper + Cropper_rect.width));
+                // }
+
                 if (thisResider.classList.contains('mover_e')){
-                    
-                    // console.warn(Cropper_rect.left)
-                    // console.warn(InitialLeftCropper)
-                    // console.warn(InitialLeftCropper + Cropper_rect.width)
-                    residersMoveX = Math.min(
-                        Math.max(residersMoveX, (CropperInitialWidth - InitialRightCropper)), 
-                        (moveable_area_right - (InitialLeftCropper + Cropper_rect.width))
-                    );
-                    console.warn('min :', (CropperInitialWidth - InitialRightCropper))
-                    console.warn('max :', (moveable_area_right - (InitialLeftCropper + Cropper_rect.width)))
-                    console.warn(residersMoveX)
-                    // Cropper.style.transform = `translateX(${residersMoveX/2}px)`;
-                    // Cropper.style.left = `${(InitialLeftCropper-background_rect.left)+residersMoveX/2}px`;
-                    // Cropper_rect.left = FinalLeftCropper;
-                    // Cropper.style.width = `${CropperInitialWidth + residersMoveX}px`;
-                    CropperFinalWidth = CropperInitialWidth + residersMoveX;
-                    FinalRightCropper = InitialLeftCropper + residersMoveX
-                    console.warn(FinalRightCropper)
-                    // Cropper.style.left = `${(Cropper_rect.width+residersMoveX)/2}px`;
-                    
+                    CropperCenterX = (InitialLeftCropper + Cropper_rect.width/2);
+                    if ((BackgroundCenterX<=CropperCenterX)){
+                        lastResidersMoveX = Math.min(
+                            Math.max(lastResidersMoveX, ((InitialLeftCropper - InitialRightCropper)/2 + 30)), (moveable_area_right - (InitialLeftCropper + Cropper_rect.width))
+                        );
+                        FinalLeftCropper = InitialLeftCropper - lastResidersMoveX;
+                    }
+                    else if ((BackgroundCenterX>CropperCenterX)){
+                        lastResidersMoveX = Math.min(
+                            Math.max(lastResidersMoveX, ((InitialLeftCropper - InitialRightCropper)/2 + 30)), (InitialLeftCropper - moveable_area_left)
+                        );
+                        FinalLeftCropper = InitialLeftCropper - lastResidersMoveX;
+                    }
+                    // console.warn('min :', (InitialLeftCropper - InitialRightCropper + 30))
+                    // console.warn('max :', (moveable_area_right - (InitialLeftCropper + Cropper_rect.width)))
+                    // console.warn(lastResidersMoveX)
+                    Cropper.style.width = `${Cropper_rect.width + 2*lastResidersMoveX}px`;
+
+                    // console.warn(CRIW_during_movement)
+                    // console.warn(InitialLeftCropper - background_rect.left + lastResidersMoveX/2)
+                    // // Cropper.style.left = `${InitialLeftCropper - background_rect.left + lastResidersMoveX/2}px`;
+                    // Cropper.style.transform = `translateX(${lastResidersMoveX/2}px)`;
+                    // InitialLeftCropper=InitialLeftCropper+lastResidersMoveX/2;
+                    CRIW_during_movement = Cropper_rect.width + 2*lastResidersMoveX;
+                    Cropper.style.height = `${CRIW_during_movement*AspectRatio}px`;
+                    CRIH_during_movement = CRIW_during_movement*AspectRatio;
+                    pointer_rect.style.left = `${FinalLeftCropper}px`;
                 }
             }
+            residersTouchX = event.clientX;
+
         }
 
         function mouseup(){
@@ -223,8 +253,6 @@ for (let resider of residers){
             window.removeEventListener('mouseup', mouseup);
         }
     }
-
-    
 }
 
 

@@ -23,7 +23,7 @@ body{
 }
 
 .Image_Rect{
-    min-width: 350px;
+    width: 350px;
     height: 650px;
     outline: 2px dotted #ff0080;
     position: absolute;
@@ -33,14 +33,16 @@ body{
 }
 
 .Cropper_Rect{
-    min-height: 200px;
-    min-width: 200px;
     outline: 100vh solid#2729285d;
     /* outline: 1px dashed #008f47; */
+    /* left: 210; */
     z-index: 1;
     cursor: move;
     /* position: relative; */
     position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .tensile{
     position: absolute;
