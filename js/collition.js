@@ -1,4 +1,4 @@
-let AspectRatio = 16/12
+let AspectRatio = 1/1
 
 let background = document.querySelector('.Background_Rect');
 let background_rect = background.getBoundingClientRect();
@@ -95,9 +95,15 @@ function cropperMouseDown(e){
 
     function mousemove(e){
         e.preventDefault();
-        if(IsCropperMoving == true){
+        if(IsCropperMoving == true & !IsResizing){
             cropperMoveX = e.clientX - cropperTouchX;
             cropperMoveY = e.clientY - cropperTouchY;
+            cropperMoveX = Math.min(
+                Math.max(cropperMoveX, (CRIW_during_movement - moveable_area_width)/2), ((moveable_area_right - moveable_area_left) - (moveable_area_width + CRIW_during_movement)/2)
+            );
+            cropperMoveY = Math.min(
+                Math.max(cropperMoveY, (CRIH_during_movement - moveable_area_height)/2), ((moveable_area_bottom - moveable_area_top) - (moveable_area_height + CRIH_during_movement)/2)
+            );
             detect_cropper_collision(cropperMoveX, cropperMoveY);
         }
     }
@@ -112,21 +118,9 @@ function cropperMouseDown(e){
 
 // DETECT ANY COLLISION HAPPEN BETWEEN CROPPER AND LARGE-RECTANGLE, OR NOT
 const detect_cropper_collision = (cropperMoveX, cropperMoveY)=>{
-
-    cropperMoveX = Math.min(
-        Math.max(cropperMoveX, (CRIW_during_movement/2 - moveable_area_width/2)), ((moveable_area_right - moveable_area_left) - (moveable_area_width + CRIW_during_movement)/2)
-    );
-    cropperMoveY = Math.min(
-        Math.max(cropperMoveY, (CRIH_during_movement/2 - moveable_area_height/2)), ((moveable_area_bottom - moveable_area_top) - (moveable_area_height + CRIH_during_movement)/2)
-    );
-    // Cropper.style.transform = `rotateZ(${-rotation}deg) translate(${cropperMoveX}px, ${cropperMoveY}px) `;
+    FinalLeftCropper = Cropper_rect.left + cropperMoveX;
+    FinalRightCropper = Cropper_rect.right + cropperMoveX;
     Cropper.style.transform = `translate(${cropperMoveX}px, ${cropperMoveY}px) `;
-    /* INITIALIZE CROPPER LEFT POSITION */
-    InitialLeftCropper = Cropper_rect.left + cropperMoveX;
-    InitialRightCropper = Cropper_rect.right + cropperMoveX;
-    FinalLeftCropper = InitialLeftCropper
-
-    console.warn(InitialLeftCropper)
 }
 
 
@@ -202,48 +196,38 @@ for (let resider of residers){
             IsResizing = true;
             let residersMoveX = event.clientX - residersTouchX;
             let residersMoveY = event.clientY - residersTouchY;
-            lastResidersMoveX = lastResidersMoveX + residersMoveX;
 
 
             if (IsResizing==true){
-                
-                console.warn(moveable_area_left, FinalLeftCropper)
-                // CropperCenter = (InitialLeftCropper + Cropper_rect.width/2);
-                // if (BackgroundCenter>=CropperCenter){
-                //     resizeWidth = (moveable_area_right - (InitialLeftCropper + Cropper_rect.width));
-                // }
-
                 if (thisResider.classList.contains('mover_e')){
-                    CropperCenterX = (InitialLeftCropper + Cropper_rect.width/2);
-                    if ((BackgroundCenterX<=CropperCenterX)){
-                        lastResidersMoveX = Math.min(
-                            Math.max(lastResidersMoveX, ((InitialLeftCropper - InitialRightCropper)/2 + 30)), (moveable_area_right - (InitialLeftCropper + Cropper_rect.width))
-                        );
-                        FinalLeftCropper = InitialLeftCropper - lastResidersMoveX;
-                    }
-                    else if ((BackgroundCenterX>CropperCenterX)){
-                        lastResidersMoveX = Math.min(
-                            Math.max(lastResidersMoveX, ((InitialLeftCropper - InitialRightCropper)/2 + 30)), (InitialLeftCropper - moveable_area_left)
-                        );
-                        FinalLeftCropper = InitialLeftCropper - lastResidersMoveX;
-                    }
-                    // console.warn('min :', (InitialLeftCropper - InitialRightCropper + 30))
-                    // console.warn('max :', (moveable_area_right - (InitialLeftCropper + Cropper_rect.width)))
-                    // console.warn(lastResidersMoveX)
-                    Cropper.style.width = `${Cropper_rect.width + 2*lastResidersMoveX}px`;
+                    lastResidersMoveX += residersMoveX;
+                    cropperMoveX += residersMoveX/2;
 
-                    // console.warn(CRIW_during_movement)
-                    // console.warn(InitialLeftCropper - background_rect.left + lastResidersMoveX/2)
-                    // // Cropper.style.left = `${InitialLeftCropper - background_rect.left + lastResidersMoveX/2}px`;
-                    // Cropper.style.transform = `translateX(${lastResidersMoveX/2}px)`;
-                    // InitialLeftCropper=InitialLeftCropper+lastResidersMoveX/2;
-                    CRIW_during_movement = Cropper_rect.width + 2*lastResidersMoveX;
+                    lastResidersMoveX = Math.min(
+                        Math.max(lastResidersMoveX, ((FinalLeftCropper - FinalRightCropper) + 30)), (moveable_area_right - (FinalLeftCropper + Cropper_rect.width))*2
+                    )
+                    Cropper.style.width = `${Cropper_rect.width + lastResidersMoveX}px`;
+                    CRIW_during_movement = Cropper_rect.width + lastResidersMoveX;
                     Cropper.style.height = `${CRIW_during_movement*AspectRatio}px`;
                     CRIH_during_movement = CRIW_during_movement*AspectRatio;
-                    pointer_rect.style.left = `${FinalLeftCropper}px`;
+                    
+                    cropperMoveX = Math.min(
+                        Math.max(cropperMoveX, ((FinalLeftCropper+15-lastResidersMoveX/2)-BackgroundCenterX)), ((moveable_area_right - moveable_area_left) - (moveable_area_width + CRIW_during_movement)/2)
+                    );
+                    
+                    cropperMoveY = Math.min(
+                        Math.max(cropperMoveY, (CRIH_during_movement - moveable_area_height)/2), ((moveable_area_bottom - moveable_area_top) - (moveable_area_height + CRIH_during_movement)/2)
+                    );
+                    // console.warn('left: ', (CRIW_during_movement - moveable_area_width)/2)
+                    // console.warn((moveable_area_right - (InitialLeftCropper + Cropper_rect.width)))
+                    // console.warn('hulala :',(-BackgroundCenterX +(FinalLeftCropper+15-lastResidersMoveX/2)))
+                    // pointer_rect.style.left = `${FinalLeftCropper+15-lastResidersMoveX/2}px`;
+
                 }
+                detect_cropper_collision(cropperMoveX, cropperMoveY);
             }
             residersTouchX = event.clientX;
+            residersTouchY = event.clientY;
 
         }
 

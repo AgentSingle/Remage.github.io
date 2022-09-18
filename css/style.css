@@ -50,94 +50,119 @@ body{
 }
 .tensile_R{
     height: 100%;
-    width: 10px;
+    width: 1px;
     border-left: 1px dashed #00ff80;
     box-sizing: border-box;
-    right: -10px;
+    right: -1px;
+    position: absolute;
 }
 .tensile_B{
-    height: 10px;
+    height: 1px;
     width: 100%;
     border-top: 1px dashed #00ff80;
     box-sizing: border-box;
-    bottom: -10px;
+    bottom: -1px;
 }
 .tensile_L{
     height: 100%;
-    width: 10px;
+    width: 1px;
     border-right: 1px dashed #00ff80;
     box-sizing: border-box;
-    left: -10px;
+    left: -1px;
 }
 .tensile_T{
-    height: 10px;
+    height: 1px;
     width: 100%;
     border-bottom: 1px dashed #00ff80;
     box-sizing: border-box;
-    top: -10px;
+    top: -1px;
 }
 
 
 /* MOVER DESIGN */
-
 .mover{
     position: absolute;
-    height: 30px;
-    width: 30px;
+    /* background-color: purple; */
     background-color: transparent;
-    background-color: #53cc9554;
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 10;
+    height: 100%;
+    width: 100%;
     z-index: 10;
 }
 .mover::before{
     content: "";
     position: absolute;
-    background-color: #00ff80;
+    background-color: #12e084;
     height: 10px;
     width: 10px;
-    z-index: 10;
+    z-index: 5;
+}
+.mover::after{
+    content: "";
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    /* background-color: #53cc9554; */
 }
 .mover_e{
-    left: calc(100% - 15px);
-    top: calc(50% - 15px);
+    height: calc(100% - 30px);
+    width: 10px;
+    left: calc(100% - 5px);
+    top: calc(- 15px);
     cursor: e-resize;
 }
 .mover_se{
+    height: 30px;
+    width: 30px;
     left: calc(100% - 15px);
     top: calc(100% - 15px);
     z-index: 2;
     cursor: se-resize;
 }
 .mover_s{
-    left: calc(50% - 15px);
-    top: calc(100% - 15px);
+    height: 10px;
+    width: calc(100% - 30px);
+    left: calc(- 15px);
+    top: calc(100% - 5px);
     cursor: s-resize;
 }
+
 .mover_sw{
+    height: 30px;
+    width: 30px;
     left:  -15px;
     top: calc(100% - 15px);
     z-index: 2;
     cursor: sw-resize;
 }
 .mover_w{
-    left:  -15px;
-    top: calc(50% - 15px);
+    height: calc(100% - 30px);
+    width: 10px;
+    left:  -5px;
+    top: calc(- 15px);
     cursor: w-resize;
 }
 .mover_nw{
+    height: 30px;
+    width: 30px;
     left:  -15px;
     top: -15px;
     z-index: 2;
     cursor: nw-resize;
 }
 .mover_n{
-    left:  calc(50% - 15px);
-    top: -15px;
+    height: 10px;
+    width: calc(100% - 30px);
+    left:  calc(- 15px);
+    top: -5px;
     cursor: n-resize;
 }
 .mover_ne{
+    height: 30px;
+    width: 30px;
     left:  calc(100% - 15px);
     top: -15px;
     z-index: 2;
