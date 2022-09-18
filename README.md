@@ -6,7 +6,7 @@
 ### 01] Position auto CENTER [YES]
 ### 02] On page resize cropper-properties are responsive [YES]
 ### 03] Cropper-container moveable (mouse-move)[YES] (touch-drag)[NO]
-### 04] Cropper-container resizable [NO]
+### 04] Cropper-container resizable [YES]
 ### 05] Cropper-container position exact inside holder [YES]
 ### 06] Cropper-container position exact inside image [YES]
 ### 07] Image moveable [YES] (touch-move, mouse-move)
