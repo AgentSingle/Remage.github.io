@@ -3,43 +3,60 @@
     padding: 0;
 }
 body{
+    font-family: sans-serif;
+}
+.Remage_Wrapper{
+    height: 100%;
+    width: 100%;
+    position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    -webkit-user-select: none;
+    user-select: none;
 }
-
 .Background_Rect{
     width: calc(100vw - 10px);
     height: 100vh;
-    max-height: 500px;
+    max-height: 600px;
     max-width: 420px;
-    position: relative;
-    outline: 2px dotted #bb27ff;
+    outline: 1px solid #23004b;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* overflow: hidden; */
+    position: absolute;
+    background-color: #000000ea;
+    overflow: hidden;
 }
 
 .Image_Rect{
-    width: 350px;
-    height: 650px;
-    outline: 2px dotted #ff0080;
+    width: auto;
+    height: auto;
+    outline: 1px solid #ffffff;
     position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+}
+.Image_Rect::after{
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: transparent;
 }
 
+.Cropper_Wrapper{
+    background-color: #e0ffe770;
+    background-color: transparent;
+    height: auto;
+    width: auto;
+}
 .Cropper_Rect{
-    outline: 100vh solid#2729285d;
-    /* outline: 1px dashed #008f47; */
-    /* left: 210; */
+    outline: 100vh solid #00008073;
+    /* outline: 100vh solid #fff; */
     z-index: 1;
     cursor: move;
-    /* position: relative; */
-    position: absolute;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -105,7 +122,7 @@ body{
     height: 30px;
     width: 30px;
     position: absolute;
-    /* background-color: #53cc9554; */
+    /* background-color: #12e084; */
 }
 .mover_e{
     height: calc(100% - 30px);
