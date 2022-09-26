@@ -9,17 +9,21 @@ const residers = document.querySelectorAll('.mover'); // RESIDER [E, SE, S, SW, 
 
 
 /* :~~~~~::~~~~~:| FUNCTION RETURN MINIMUM AND MAXIMUM VALUE FROM AN ARRAY |:~~~~~::~~~~~: */
+/* Creating a function that will return the minimum value of an array. */
 Array.min = function( min_arr ){
-    return Math.min.apply( Math, min_arr );  // GET MINIMUM VALUE FROM AN ARRAY
+    return Math.min.apply( Math, min_arr );
 };
+/* Finding the maximum value in an array. */
 Array.max = function( max_arr ){
-    return Math.max.apply( Math, max_arr );  // GET MAXIMUM VALUE FROM AN ARRAY
+    return Math.max.apply( Math, max_arr );
 };
 
 
 /* :~~~~~::~~~~~::~~~~~:| INITIALIZE CROPPER WIDTH & HEIGHT |:~~~~~::~~~~~::~~~~~: */
 let wd = 100; // :INITIAL WIDTH OF CROPPER
-let AspectRatio = 3/2; // CROPPER ASPECT-RATIO
+let AspectRatio = 1/1; // CROPPER ASPECT-RATIO
+
+/* CropperSize() is a function that sets the size of the cropper to the size of the window.*/
 const CropperSize = ()=>{
     Cropper_Wrapper.style.position = `absolute`;
     Cropper.style.width = `${wd}px`;
@@ -41,18 +45,24 @@ let Image_Content_AspectRatio = (Image_Content.naturalWidth / Image_Content.natu
 let Background_AspectRatio = (background_rect.width / background_rect.height) /* BACKGROUND ASPECT-RATIO */ 
 
 /* -----:[ WHEN PICTURE WIDTH > HEIGHT ]:----- */
+/* Checking the aspect ratio of the image and the aspect ratio of the background. If the image is wider
+than the background, it will set the width of the image to the width of the background and the
+height of the image to the height of the background divided by the aspect ratio of the image. */
 if (Image_Content_AspectRatio >= Background_AspectRatio){
     Image_Wrapper.style.width = `${background_rect.width}px`;
     Image_Wrapper.style.height = `${Math.round(background_rect.width / Image_Content_AspectRatio)}px`;
     position_content();
 }
 /* -----:[ WHEN PICTURE WIDTH < HEIGHT ]:----- */
+/* Checking if the image is too tall for the background. If it is, it is resizing the image to fit the
+background. */
 if ((Image_Content_AspectRatio) < Background_AspectRatio & (Image_Content_AspectRatio > 0)){
     Image_Wrapper.style.width = `${Math.round(background_rect.height * Image_Content_AspectRatio)}px`;
     Image_Wrapper.style.height = `${background_rect.height}px`;
     position_content();
 }
 /* -----:[ CENTER ALL CONTENTS ]:----- */
+/* It positions the image and the cropper in the center of the screen. */
 function position_content(){
     Cropper.style.left = `calc(50% - ${Cropper_rect.width/2}px)`;
     Cropper.style.top = `calc(50% - ${Cropper_rect.height/2}px)`;
@@ -108,6 +118,7 @@ let top_arr = [Image_Wrapper_rect.top, background_rect.top],
 
 
 /* :~~~~~::~~~~~::~~~~~:| RELOAD LOCATION ON RESIZE |:~~~~~::~~~~~::~~~~~: */
+/* Reloading the page after 2 seconds of resizing the window. */
 window.addEventListener('resize', ()=>{
     setTimeout(() => {
         location.reload();
@@ -119,24 +130,44 @@ window.addEventListener('resize', ()=>{
 
 
 /* :~~~~~::~~~~~::~~~~~:| MOVE CROPPER RECTANGLE FUNCTION |:~~~~~::~~~~~::~~~~~: */
+/**
+ * The function takes two arguments, cropperMoveX and cropperMoveY, and then sets the transform
+ * property of the Cropper_Wrapper element to the values of the arguments.
+ * @param cropperMoveX - The X-axis movement of the cropper
+ * @param cropperMoveY - The Y-axis movement of the cropper
+ */
 const detect_cropper_collision = (cropperMoveX, cropperMoveY)=>{
     Cropper_Wrapper.style.transform = `translate(${cropperMoveX}px, ${cropperMoveY}px) `;
 }
 
-/* :~~~~~:| DETECT ANY COLLISION HAPPEN BETWEEN CROPPER AND LARGE-RECTANGLE, OR NOT |:~~~~~: */
-Cropper.addEventListener('mousedown', cropperMouseDown);
 
-function cropperMouseDown(e){
+/* :~~~~~:| DETECT ANY COLLISION HAPPEN BETWEEN CROPPER AND LARGE-RECTANGLE, OR NOT |:~~~~~: */
+/* The above code is adding an event listener to the Cropper element. The event listener is listening
+for a pointerdown event. When the pointerdown event is triggered, the cropperPointerDown function is
+called. */
+Cropper.addEventListener('pointerdown', cropperPointerDown);
+
+/*
+ * When the mouse is down, move the cropper to the mouse's position, but don't let it move outside the
+ * moveable area.
+ */
+function cropperPointerDown(e){
     e.preventDefault();
     IsCropperMoving = true;
     cropperTouchX = e.clientX - cropperMoveX;
     cropperTouchY = e.clientY - cropperMoveY;
 
-    window.addEventListener('mousemove', mousemove);
-    window.addEventListener('mouseup', mouseup);
+    window.addEventListener('pointermove', cropperPointermove);
+    window.addEventListener('pointerup', cropperPointerup);
 
-    /* :----*---:| MOUSE-MOVE EVENT |:----*---: */
-    function mousemove(event){
+    /* :----*---:| POINTER-MOVE EVENT |:----*---: */
+    /*
+     * "If the cropper is being moved, and it's not being resized, then set the cropper's x and y
+     * coordinates to the mouse's x and y coordinates, minus the cropper's x and y coordinates."
+     * The rest of the function is just to make sure that the cropper doesn't move outside of the
+     * moveable area.
+     */
+    function cropperPointermove(event){
         event.preventDefault();
 
         if(IsCropperMoving == true & !IsResizing){
@@ -145,52 +176,62 @@ function cropperMouseDown(e){
             Cropper_rect = Cropper.getBoundingClientRect();
             Cropper_Wrapper_rect = Cropper_Wrapper.getBoundingClientRect();
 
-            /* ----*---:| MOVE MAX X-DIRECTION |:----*--- */
+            /* Limiting the movement of the cropper to the width of the moveable area. */
             cropperMoveX = Math.min(
                 Math.max(cropperMoveX, 
                     ((Cropper_rect.width - moveable_area_width)/2 - (Cropper_rect.left - Cropper_Wrapper_rect.left))
                 ), ((moveable_area_width - Cropper_rect.width)/2 - (Cropper_rect.left - Cropper_Wrapper_rect.left))
             );
 
-            /* ----*---:| MOVE MAX Y-DIRECTION |:----*--- */
+            /* Limiting the movement of the cropper to the boundaries of the moveable area. */
             cropperMoveY = Math.min(
                 Math.max(
                     cropperMoveY,
                     ((Cropper_rect.height - moveable_area_height)/2  - (Cropper_rect.top - Cropper_Wrapper_rect.top))
                 ), ((moveable_area_height - Cropper_rect.height)/2  - (Cropper_rect.top - Cropper_Wrapper_rect.top))
             );
+            /*
+            Calling the function detect_cropper_collision() and passing it the values of
+            cropperMoveX and cropperMoveY. 
+            */
             detect_cropper_collision(cropperMoveX, cropperMoveY);
         }
 
     }
 
-    /* :----*---:| MOUSE-UP EVENT |:----*---: */
-    function mouseup(){
+    /* :----*---:| POINTER-UP EVENT |:----*---: */
+    /**
+     * If the cropper is moving, then remove the event listeners for pointermove and pointerup.
+     */
+    function cropperPointerup(){
         IsCropperMoving = false;
-        window.removeEventListener('mouseup', mouseup);
-        window.removeEventListener('mousemove', mousemove);
+        window.removeEventListener('pointermove', cropperPointermove);
+        window.removeEventListener('pointerup', cropperPointerup);
     }
 
 }
 
-
-
 /* :~~~~~::~~~~~::~~~~~:| RESIZE THE CROPPER RECTANGLE |:~~~~~::~~~~~::~~~~~:*/
+/* The above code is for resizing the cropper. */
 for (let resider of residers){
 
-    resider.addEventListener('mousedown', residersMouseEvent);
+    resider.addEventListener('pointerdown', residersPointerEvent);
 
-    function residersMouseEvent(e){
+    /**
+     * It's a function that resizes the cropper element by dragging the residers.
+     * @param e - The event object.
+     */
+    function residersPointerEvent(e){
         e.preventDefault();
         let thisResider = e.target;
         residersTouchX = e.clientX;
         residersTouchY = e.clientY;
 
-        window.addEventListener('mousemove', mousemove);
-        window.addEventListener('mouseup', mouseup);
+        window.addEventListener('pointermove', pointermove);
+        window.addEventListener('pointerup', pointerup);
 
         /* :----*---:| MOUSE-MOVE EVENT |:----*---: */
-        function mousemove(event){
+        function pointermove(event){
             IsCropperMoving = false;
             IsResizing = true;
             let residersMoveX = event.clientX - residersTouchX;
@@ -205,7 +246,9 @@ for (let resider of residers){
                 if (thisResider.classList.contains('mover_e')){
                     Cropper_New_Width = (Cropper_rect.width - (residersTouchX - event.clientX));
 
-                    /* ~~~~~~~< BOUND MAXIMUM WIDTH >~~~~~~~ */
+                    /* Limiting the width of the cropper to a minimum of 30px and a maximum of the
+                    distance between the left side of the cropper and the right side of the moveable
+                    area. */
                     Cropper_New_Width = Math.min(
                         Math.max( Cropper_New_Width, (30)), (moveable_area_right - Cropper_rect.left)
                     );
@@ -219,7 +262,8 @@ for (let resider of residers){
                     cropperMoveX += residersMoveX;
                     Cropper_New_Width = (Cropper_rect.width + (residersTouchX - event.clientX));
 
-                    /* ~~~~~~~< BOUND MAXIMUM WIDTH >~~~~~~~ */
+                    /* Setting the width of the cropper to a minimum of 30 and a maximum of the right
+                    side of the cropper minus the left side of the moveable area. */
                     Cropper_New_Width = Math.min(
                         Math.max(Cropper_New_Width, (30)), (Cropper_rect.right - moveable_area_left)
                     );
@@ -227,9 +271,9 @@ for (let resider of residers){
                     Cropper.style.width = `${Cropper_New_Width}px`;
                     Cropper_Wrapper.style.width = `${Cropper_New_Width}px`;
 
-                    /* ~~~~~~~< CROPPER MOVE MAX X-DIRECTION >~~~~~~~ */
+                    /* Limiting the movement of the cropper to the right side of the image. */
                     cropperMoveX = Math.min(
-                        Math.max(cropperMoveX, ((wd - moveable_area_width)/2)), (moveable_area_right - BackgroundCenterX + 20)
+                        Math.max(cropperMoveX, ((wd - moveable_area_width)/2)), (moveable_area_right - BackgroundCenterX)
                     );
                     detect_cropper_collision(cropperMoveX, cropperMoveY);
                 }
@@ -263,7 +307,7 @@ for (let resider of residers){
                     /* ~~~~~~~< CROPPER MOVE MAX Y-DIRECTION >~~~~~~~ */
                     cropperMoveY += residersMoveY;
                     cropperMoveY = Math.min(
-                        Math.max(cropperMoveY, (((wd*AspectRatio) - moveable_area_height)/2)), (moveable_area_bottom - BackgroundCenterY + 10)
+                        Math.max(cropperMoveY, (((wd*AspectRatio) - moveable_area_height)/2)), (moveable_area_bottom - BackgroundCenterY)
                     );
                     detect_cropper_collision(cropperMoveX, cropperMoveY);
                 }
@@ -276,10 +320,14 @@ for (let resider of residers){
         }
         
         /* :----*---:| MOUSE-UP EVENT |:----*---: */
-        function mouseup(){
+        /**
+         * If the user is resizing, then stop resizing and remove the event listeners for pointermove
+         * and pointerup.
+         */
+        function pointerup(){
             IsResizing = false;
-            window.removeEventListener('mousemove', mousemove);
-            window.removeEventListener('mouseup', mouseup);
+            window.removeEventListener('pointermove', pointermove, false);
+            window.removeEventListener('pointerup', pointerup, false);
         }
     }
 }
