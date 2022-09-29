@@ -1,0 +1,218 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+:root {
+    --default-height: 100px;
+}
+
+body{
+    font-family: sans-serif;
+}
+
+/* Making the image responsive. */
+.ReImage_Wrapper{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: none;
+}
+
+/* The container for the image. */
+.ReImage_Background{
+    width: calc(100vw - 10%);
+    height: calc(100vh - 20%);
+    max-height: 650px;
+    /* max-width: 650px; */
+    max-width: 420px;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #6b6b6b;
+    overflow: hidden;
+    outline: 1px solid gray;
+}
+/* The container for the image. */
+.ReImage_Image_Container{
+    width: auto;
+    height: auto;
+    /* outline: 1px solid #11172e; */
+    position: absolute;
+    user-select: none;
+    background-color: #4c5dac;
+}
+.ReImage_Image_Container::after{
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.ReImage_Cover{
+    /* background-color: #f728e6dc; */
+    background-color: transparent;
+    height: auto;
+    width: auto;
+}
+.ReImage_Rectangle{
+    /* background-color: #14ec3159; */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    outline: 200vh solid #0000007c;
+}
+
+.ReImage_Cropper_Mask{
+    cursor: move;
+    background-color: transparent;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    right: 0;
+    z-index: 50;
+    outline: 1px dashed #00ffaa;
+}
+
+/* The CSS for the tensile. */
+.ReImage_Tensile{
+    position: absolute;
+    background-color: #09ff008e;
+}
+.RTE{
+    height: 100%;
+    width: 0.01px;
+    right: -0.005px;
+}
+.RTS{
+    width: 100%;
+    height: 0.01px;
+    bottom: -0.005px;
+}
+.RTW{
+    height: 100%;
+    width: 0.01px;
+    left: -0.005px;
+}
+.RTN{
+    width: 100%;
+    height: 0.01px;
+    bottom: -0.005px;
+}
+
+/* The container for the movers. */
+.ReImage_Mover{
+    position: absolute;
+    /* background-color: #ff00d4ad; */
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================== */
+.RMwidth{
+    width: 10px;
+    top: 15px;
+    height: calc(100% - 30px);
+}
+/* The CSS for the right mover. */
+.RME{
+    right: -5px;
+    cursor: e-resize;
+}
+.RME::before{
+    content: " ";
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    background-color: #00ff22;
+}
+.RME::after{
+    content: " ";
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    top: calc(50% - 15px);
+    /* background-color: #006effb2; */
+}
+/* The CSS for the left mover. */
+.RMW{
+    left: -5px;
+    cursor: w-resize;
+}
+.RMW::before{
+    content: " ";
+    height: 10px;
+    width: 10px;
+    position: absolute;
+    background-color: #00ff22;
+}
+.RMW::after{
+    content: " ";
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    top: calc(50% - 15px);
+    /* background-color: #006effb2; */
+}
+
+/* ============================== */
+.RMheight{
+    width: calc(100% - 30px);
+    left: 15px;
+    height: 10px;
+}
+/* The CSS for the bottom mover. */
+.RMS{
+    bottom: -5px;
+    cursor: s-resize;
+}
+.RMS::before{
+    content: " ";
+    height: 10px;
+    width: 10px;
+    position: absolute;
+    background-color: #00ff22;
+}
+.RMS::after{
+    content: " ";
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    left: calc(50% - 15px);
+    /* background-color: #006effb2; */
+}
+/* The CSS for the top mover. */
+.RMN{
+    top: -5px;
+    cursor: n-resize;
+}
+.RMN::before{
+    content: " ";
+    height: 10px;
+    width: 10px;
+    position: absolute;
+    background-color: #00ff22;
+}
+.RMN::after{
+    content: " ";
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    left: calc(50% - 15px);
+    /* background-color: #006effb2; */
+}
+
