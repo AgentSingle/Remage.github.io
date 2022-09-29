@@ -3,54 +3,61 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
+        <title>ReImage</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/ReImage.css">
         <link rel="stylesheet" href="css/dummy.css">
     </head>
     <body>
-        <div class="Remage_Wrapper">
-            <div class="Background_Rect">
+        
+        <!-- <div class="heading">
+            HEADING
+        </div> -->
 
-                <!-- The image that is being cropped. -->
-                <div class="Image_Rect">
-                    <!-- <img src="./img/red-apple.jpg" class="inputImg" alt="i"> -->
-                    <!-- <img src="./img/Animy.jpg" class="inputImg" alt="i"> -->
-                    <!-- <img src="./img/Exercize.jpg" class="inputImg" alt="i"> -->
-                    <!-- <img src="./img/GreenNature.jpg" class="inputImg" alt="i"> -->
-                    <!-- <img src="./img/madagasker.jpg" class="inputImg" alt="i"> -->
-                    <!-- <img src="./img/OceanWomen.jpg" class="inputImg" alt="i"> -->
-                    <img src="./img/SwimingWomen.jpg" class="inputImg" alt="i">
-                    <!-- <img src="./img/women-mood-flower.jpg" class="inputImg" alt="i"> -->
-                </div>
+        <div class="newcontent">
+            <!-- The HTML for the ReImage. -->
+            <div class="ReImage_Wrapper">
+                <div class="ReImage_Background">
 
-                <!-- The cropper wrapper and cropper rect. -->
-                <div class="Cropper_Wrapper">
-                    <div class="Cropper_Rect">
-                        <div class="tensile tensile_R"></div>
-                        <div class="tensile tensile_B"></div>
-                        <div class="tensile tensile_L"></div>
-                        <div class="tensile tensile_T"></div>
-                        
-                        <div class="mover mover_e"></div>
-                        <div class="mover mover_se"></div>
-                        <div class="mover mover_s"></div>
-                        <div class="mover mover_sw"></div>
-                        <div class="mover mover_w"></div>
-                        <div class="mover mover_nw"></div>
-                        <div class="mover mover_n"></div>
-                        <div class="mover mover_ne"></div>
-    
-                        <span class="IMC IM_one"></span>
-                        <span class="IMC IM_two"></span>
+                    <!-- The container for the image. -->
+                    <div class="ReImage_Image_Container">
+                        <!-- <img src="./img/Animy.jpg"  alt="#" onContextMenu="return false;"> -->
+                        <!-- <img src="./img/Exercize.jpg"  alt="#" onContextMenu="return false;"> -->
+                        <!-- <img src="./img/GreenNature.jpg"  alt="#" onContextMenu="return false;"> -->
+                        <!-- <img src="./img/madagasker.jpg"  alt="#" onContextMenu="return false;"> -->
+                        <!-- <img src="./img/OceanWomen.jpg"  alt="#" onContextMenu="return false;"> -->
+                        <!-- <img src="./img/red-apple.jpg"  alt="#" onContextMenu="return false;"> -->
+                        <img src="./img/SwimingWomen.jpg"  alt="#" onContextMenu="return false;">
+                        <!-- <img src="./img/women-mood-flower.jpg"  alt="#" onContextMenu="return false;"> -->
+                    </div>
+
+                    <!-- The cover for the image. -->
+                    <div class="ReImage_Cover">
+                        <div class="ReImage_Rectangle">
+                            <!-- <div class="ReImage_Cropper"></div> -->
+                            <div class="ReImage_Cropper_Mask">
+                                <div class="ReImage_Tensile RTE"></div>
+                                <div class="ReImage_Tensile RTS"></div>
+                                <div class="ReImage_Tensile RTW"></div>
+                                <div class="ReImage_Tensile RTN"></div>
+                            </div>
+                            
+                            <!-- MOVER CONTAINERS -->
+                            <div class="ReImage_Mover RMwidth RME"></div>
+                            <div class="ReImage_Mover RMheight RMS"></div>
+                            <div class="ReImage_Mover RMwidth RMW"></div>
+                            <div class="ReImage_Mover RMheight RMN"></div>
+                        </div>
                     </div>
                 </div>
-                
             </div>
         </div>
+
+        <!-- <div class="heading">
+            HEADING
+        </div> -->
         
-        
-        <script src="js/collition.js" async defer></script>
+        <script src="js/ReImage.js" async defer></script>
     </body>
 </html>

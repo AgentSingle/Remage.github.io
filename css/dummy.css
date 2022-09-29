@@ -1,15 +1,14 @@
+.IMC{
+    position: absolute;  
+    background-color: none;
+}
 .IM_one{
     height: 100%;
-    position: absolute;  
+    border-left: 1px dashed #dbdbdb94;
+    box-sizing: border-box;
 }
 .IM_two{
     width: 100%;
-    position: absolute;
-}
-.pointer_rect{
-    height: 10px;
-    width: 10px;
-    background-color: black;
-    position: absolute;
-    left: 0;
+    border-top: 1px dashed #dbdbdb94;
+    box-sizing: border-box;
 }
