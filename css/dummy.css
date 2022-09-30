@@ -12,3 +12,57 @@
     border-top: 1px dashed #dbdbdb94;
     box-sizing: border-box;
 }
+
+/* Centering the canvas. */
+.canvas_Wrapper{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: none;
+}
+
+.Style_De_Image{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+#Image_Preview_Container{
+    position: absolute;
+    background-color: #00271fec;
+    height: 100%;
+    width: 100%;
+}
+.Hide_Image_Preview_Container{
+    display: none;
+}
+
+.Link_and_Button_Wrapper{
+    width: calc(100vw - 10%);
+    height: calc(100vh - 20%);
+    max-height: 650px;
+    max-width: 420px;
+    position: absolute;
+    z-index: 5;
+}
+.buttons_content{
+    position: absolute;
+    height: 40px;
+    width: 100%;
+    background-color: #2c2c2c;
+    outline: 1px solid #000000;
+    bottom: -40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.buttons_content button{
+    outline: 0;
+    height: 100%;
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    color: #ffffff;
+}

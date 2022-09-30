@@ -21,6 +21,7 @@ body{
     -webkit-user-select: none;
     user-select: none;
     touch-action: none;
+    z-index: 0;
 }
 
 /* The container for the image. */
@@ -35,8 +36,9 @@ body{
     align-items: center;
     justify-content: center;
     background-color: #6b6b6b;
+    outline: 1px solid #000000;
     overflow: hidden;
-    outline: 1px solid gray;
+    z-index: 10;
 }
 /* The container for the image. */
 .ReImage_Image_Container{
