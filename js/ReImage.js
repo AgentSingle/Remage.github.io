@@ -3,9 +3,13 @@ const ReImage_Image_Container = document.querySelector('.ReImage_Image_Container
 const ReImage_TensileS = document.querySelectorAll('.ReImage_Tensile');
 const ReImage_MoverS = document.querySelectorAll('.ReImage_Mover');
 
+const Preview_Container = document.querySelector("#Image_Preview_Container");
+const Finalize_Image = document.querySelector("#Finalize_Image");
+
 
 let Image_Content = ReImage_Image_Container.firstElementChild,
-    ImageUrl = Image_Content.src;
+    ImageUrl = Image_Content.src,
+    dataURL;
 
 let ReImage_Background,
     ReImage_Cover,
@@ -128,11 +132,9 @@ const Import_Content_and_Adjust = () =>{
     ReImage_Background = document.querySelector('.ReImage_Background');
     ReImage_Cover = document.querySelector('.ReImage_Cover');
     ReImage_Rectangle = document.querySelector('.ReImage_Rectangle');
-    cropperMoveX = 0;
-    cropperMoveY = 0;
+    cropperMoveX = 0, cropperMoveY = 0;
     detect_cropper_collision(cropperMoveX, cropperMoveY);
-    scroll_height = 0;
-    scroll_width = 0;
+    scroll_height = 0, scroll_width = 0;
 
 
     /* :~~~~~::~~~~~::~~~~~:| REQUIRE BOUNDING RECTANGLE |:~~~~~::~~~~~::~~~~~: */
@@ -147,7 +149,7 @@ const Import_Content_and_Adjust = () =>{
     ReImage_Cover.style.position = `absolute`;
     ReImage_Rectangle.style.left = `${0}`;
     ReImage_Rectangle.style.top = `${0}`;
-    ReImage_Rectangle_rect = ReImage_Rectangle.getBoundingClientRect(),
+    ReImage_Rectangle_rect = ReImage_Rectangle.getBoundingClientRect();
 
 
     /* :~~~~~::~~~~~::~~~~~:| ADJUST PICTURE ACCORDING TO HEIGHT & WIDTH |:~~~~~::~~~~~::~~~~~: */
@@ -196,6 +198,10 @@ const Import_Content_and_Adjust = () =>{
     RTEmaxRight = RTE_rect.right;
     RTS_rect = RTS.getBoundingClientRect();
     RTSmaxBottom = RTS_rect.bottom;
+
+
+    /* Drawing an image in a canvas. */
+    drawImage_in_canvas();
 }
 
 
@@ -220,6 +226,7 @@ const Initialize_Cropper = () =>{
     function cropperPointerDown(e){
         e.preventDefault();
         IsCropperMoving = true;
+        IsResizing = false;
         cropperTouchX = e.clientX - cropperMoveX;
         cropperTouchY = e.clientY - cropperMoveY;
 
@@ -272,6 +279,8 @@ const Initialize_Cropper = () =>{
             IsCropperMoving = false;
             window.removeEventListener('pointermove', cropperPointermove);
             window.removeEventListener('pointerup', cropperPointerup);
+            /* Drawing an image in a canvas. */
+            drawImage_in_canvas();
         }
     };
 
@@ -286,17 +295,18 @@ const Initialize_Cropper = () =>{
             moverTouchX = e.clientX;
             moverTouchY = e.clientY;
 
-            window.addEventListener('pointermove', moverPM);
+            thisMover.addEventListener('pointermove', moverPM);
             window.addEventListener('pointerup', moverPU);
 
             function moverPM(event){
                 IsResizing = true;
-                let moverMoveX = event.clientX - moverTouchX;
-                let moverMoveY = event.clientY - moverTouchY;
+                IsCropperMoving = false;
 
-                if (IsResizing == true){
+                if ((IsResizing == true) & !IsCropperMoving){
                     let Cropper_New_Width;
                     let Cropper_New_Height;
+                    let moverMoveX = event.clientX - moverTouchX;
+                    let moverMoveY = event.clientY - moverTouchY;
                     ReImage_Rectangle_rect = ReImage_Rectangle.getBoundingClientRect();
                     RTE_rect = RTE.getBoundingClientRect();
                     RTS_rect = RTS.getBoundingClientRect();
@@ -384,16 +394,34 @@ const Initialize_Cropper = () =>{
                         );
                         detect_cropper_collision(cropperMoveX, cropperMoveY);
                     }
+
+                    /* Getting the x and y coordinates of the touch event. */
+                    moverTouchX = event.clientX;
+                    moverTouchY = event.clientY;
                 };
-                moverTouchX = event.clientX;
-                moverTouchY = event.clientY;
 
             };
 
+            /* If the mouse is over the cropper, then the cropper is not moving. */
+            ReImage_Image_Container.addEventListener('pointerover', moverPO);
+            function moverPO(){
+                IsResizing = false;
+                IsCropperMoving = false;
+            }
+
+            /*
+             * When the user releases the mouse button, stop listening for mouse movement and stop
+             * listening for the mouse to be over the image.
+             */
             function moverPU(){
                 IsResizing = false;
-                window.removeEventListener('pointermove', moverPM);
+                IsCropperMoving = false;
+                thisMover.removeEventListener('pointermove', moverPM);
+                ReImage_Image_Container.removeEventListener('pointerover', moverPO);
                 window.removeEventListener('pointerup', moverPU);
+
+                /* Drawing an image in a canvas. */
+                drawImage_in_canvas();
             }
         }
     }
@@ -405,3 +433,57 @@ window.addEventListener('resize', ()=>{
         Import_Content_and_Adjust();
     }, 1000);
 })
+
+
+/**
+ * This function draws an image in a canvas.
+ */
+let CANVAS = document.querySelector('#Image_Drawing_Canvas')
+const drawImage_in_canvas = () =>{
+    // let canvas_rect = CANVAS.getBoundingClientRect();
+    
+    // ReImage_Cover_rect = ReImage_Cover.getBoundingClientRect();
+    let Image_Content_rect = Image_Content.getBoundingClientRect();
+    ReImage_Rectangle_rect = ReImage_Rectangle.getBoundingClientRect();
+    // ReImage_Cover_rect
+
+    CANVAS_width = ReImage_Rectangle_rect.width;
+    CANVAS_height = ReImage_Rectangle_rect.height;
+    // console.warn(canvas_rect)
+    // console.warn(ReImage_Rectangle_rect)
+    CANVAS.width = `${CANVAS_width}`;
+    CANVAS.height = `${CANVAS_height}`;
+
+    // console.warn(ReImage_Cover_rect)
+    console.warn(Image_Content.src)
+
+    let DrawFormLeft = (ReImage_Rectangle_rect.left - Image_Content_rect.left);
+    let DrawFormTop = (ReImage_Rectangle_rect.top - Image_Content_rect.top);
+    let formLeft = DrawFormLeft*(Image_Content.naturalWidth/Image_Content_rect.width);
+    let fromTop = DrawFormTop*(Image_Content.naturalHeight/Image_Content_rect.height);
+
+    
+    let Img_Draw_Width = (CANVAS_width)*(Image_Content.naturalWidth/Image_Content_rect.width);
+    let Img_Draw_Height = (CANVAS_height)*(Image_Content.naturalWidth/Image_Content_rect.width);
+
+    // DRAWING AN IMAGE INSIDE THE CANVAS
+    const image = new Image(),
+    canvas = CANVAS,
+    ctx = canvas.getContext('2d');
+    image.src = Image_Content.src
+    
+    image.addEventListener('load', () => {
+        ctx.drawImage(image,
+            formLeft, fromTop,   // Start at 70/20 pixels from the left and the top of the image (crop),
+            Img_Draw_Width, Img_Draw_Height,   // "Get" (w * h) area from the source image (crop),
+            0, 0,   // Place the result at 0, 0 in the canvas,
+            CANVAS_width, CANVAS_height // With as width / height: 100 * 100 (scale)
+        );
+        
+        /* Converting the canvas to a dataURL. */
+        let dataURL = canvas.toDataURL('image/png');
+        Finalize_Image.src = dataURL;
+
+    });
+
+}
