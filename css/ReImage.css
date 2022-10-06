@@ -28,8 +28,8 @@ body{
 .ReImage_Background{
     width: calc(100vw - 10%);
     height: calc(100vh - 20%);
+    top: calc(10% - 40px);
     max-height: 650px;
-    /* max-width: 650px; */
     max-width: 420px;
     position: absolute;
     display: flex;
