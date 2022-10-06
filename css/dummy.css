@@ -21,11 +21,15 @@
     align-items: center;
     display: none;
 }
+.clipping_canvas_Wrapper{
+    display: none;
+}
 
 .Style_De_Image{
     display: flex;
     justify-content: center;
     align-items: center;
+    object-fit: cover;
 
 }
 #Image_Preview_Container{

@@ -16,6 +16,7 @@
 ### 11] Smooth cropper movement [YES]
 ### 12] Cropper side resize buttons [YES]
 ### 13] Image resize on-touch [No]
-### 14] Cropper Return Base-64 data [No]
+### 14] Cropper Return Base-64 data [YES]
+### 14] Rotate image then Crop [YES]
 
 
