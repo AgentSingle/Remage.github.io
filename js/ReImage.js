@@ -4,7 +4,6 @@ const ReImage_TensileS = document.querySelectorAll('.ReImage_Tensile');
 const ReImage_MoverS = document.querySelectorAll('.ReImage_Mover');
 
 const Preview_Container = document.querySelector("#Image_Preview_Container");
-const Finalize_Image = document.querySelector("#Finalize_Image");
 
 const RotatePlus_Image = document.querySelector("#RotatePlus_Image");
 const RotateMinus_Image = document.querySelector("#RotateMinus_Image");
@@ -49,7 +48,8 @@ let imageTouchX,
     imageTouchY,
     imageMoveX,
     imageMoveY,
-    IsImageMove = false;
+    IsImageMove = false,
+    ImageRespectRatio;
 
 let moverTouchX,
     moverTouchY,
@@ -201,7 +201,7 @@ const Import_Content_and_Adjust = () =>{
             ReImage_Image_Container.style.height = `${ReImage_Background_rect.height}px`;
         }
         else if((img_rotate == 90) | (img_rotate == 270) | (img_rotate == -90) | (img_rotate == -270)){
-            ReImage_Image_Container.style.width = `${Math.round(ReImage_Background_rect.height * Image_Content_AspectRatio)}px`;
+            ReImage_Image_Container.style.width = `${Math.round(ReImage_Background_rect.width * Image_Content_AspectRatio)}px`;
             ReImage_Image_Container.style.height = `${ReImage_Background_rect.width}px`;
         }
         position_content();
@@ -219,6 +219,8 @@ const Import_Content_and_Adjust = () =>{
     ReImage_Image_Container_rect = ReImage_Image_Container.getBoundingClientRect();
     BackgroundCenterX = (ReImage_Background_rect.left + ReImage_Background_rect.width/2),
     BackgroundCenterY = (ReImage_Background_rect.top + ReImage_Background_rect.height/2);
+    // AMOUNT OF IMAGE CONTRACTION / EXPANSION [RATIO] => ImageRespectRatio
+    ImageRespectRatio = (Image_Content.naturalWidth/ ReImage_Image_Container_rect.width);
 
     /* Calling the function Detect_Moveable_Area() */
     Detect_Moveable_Area();
@@ -531,8 +533,8 @@ let CANVAS = document.querySelector('#Image_Drawing_Canvas');
 
 const drawImage_in_canvas = () =>{
     // DRAWING AN IMAGE INSIDE THE CANVAS
-    CANVAS.width = ReImage_Image_Container_rect.width;
-    CANVAS.height = ReImage_Image_Container_rect.height;
+    CANVAS.width = ReImage_Image_Container_rect.width * ImageRespectRatio;
+    CANVAS.height = ReImage_Image_Container_rect.height * ImageRespectRatio;
     let draw_width = CANVAS.width;
     let draw_height = CANVAS.height;
     if ((img_rotate == 90) | (img_rotate == 270) | (img_rotate == -90) | (img_rotate == -270)){
@@ -565,13 +567,13 @@ const clip_the_canvas = () =>{
     let Image_Content_rect = Image_Content.getBoundingClientRect();
     ReImage_Rectangle_rect = ReImage_Rectangle.getBoundingClientRect();
     
-    let Clipping_CANVAS_width = ReImage_Rectangle_rect.width;
-    let Clipping_CANVAS_height = ReImage_Rectangle_rect.height;
+    let Clipping_CANVAS_width = ReImage_Rectangle_rect.width * ImageRespectRatio;
+    let Clipping_CANVAS_height = ReImage_Rectangle_rect.height * ImageRespectRatio;
     clipping_CANVAS.width = Clipping_CANVAS_width;
     clipping_CANVAS.height = Clipping_CANVAS_height;
 
-    let DrawFormLeft = (ReImage_Rectangle_rect.left - Image_Content_rect.left);
-    let DrawFormTop = (ReImage_Rectangle_rect.top - Image_Content_rect.top);
+    let DrawFormLeft = (ReImage_Rectangle_rect.left - Image_Content_rect.left) * ImageRespectRatio;
+    let DrawFormTop = (ReImage_Rectangle_rect.top - Image_Content_rect.top) * ImageRespectRatio;
 
     const final_canvas = clipping_CANVAS,
     hidden_ctx = final_canvas.getContext('2d');
@@ -591,5 +593,8 @@ const clip_the_canvas = () =>{
             
     /* Converting the canvas to a dataURL. */
     let dataURL = clipping_CANVAS.toDataURL('image/png');
-    Finalize_Image.src = dataURL;
+    Preview_Container.innerHTML = `<img src="${dataURL}" 
+                                    style="width:${ReImage_Rectangle_rect.width}px;
+                                    height:${ReImage_Rectangle_rect.height}px"
+                                    alt="alterImg">`;
 }
