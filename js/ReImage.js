@@ -182,11 +182,11 @@ const Import_Content_and_Adjust = () =>{
     than the background, it will set the width of the image to the width of the background and the
     height of the image to the height of the background divided by the aspect ratio of the image. */
     if (Image_Content_AspectRatio >= Background_AspectRatio){
-        if((img_rotate == 0) | (img_rotate == 180)){
+        if((img_rotate == 0) | (img_rotate == 180) | (img_rotate == -180)){
             ReImage_Image_Container.style.width = `${ReImage_Background_rect.width}px`;
             ReImage_Image_Container.style.height = `${Math.round(ReImage_Background_rect.width / Image_Content_AspectRatio)}px`;
         }
-        else if((img_rotate == 90) | (img_rotate == 270)){
+        else if((img_rotate == 90) | (img_rotate == 270) | (img_rotate == -90) | (img_rotate == -270)){
             ReImage_Image_Container.style.width = `${Math.round(ReImage_Background_rect.width* Image_Content_AspectRatio)}px`;
             ReImage_Image_Container.style.height = `${ReImage_Background_rect.width}px`;
         }
@@ -196,11 +196,11 @@ const Import_Content_and_Adjust = () =>{
     /* Checking if the image is too tall for the background. If it is, it is resizing the image to fit the
     background. */
     if ((Image_Content_AspectRatio < Background_AspectRatio) & (Image_Content_AspectRatio > 0)){
-        if((img_rotate == 0) | (img_rotate == 180)){
+        if((img_rotate == 0) | (img_rotate == 180) | (img_rotate == -180)){
             ReImage_Image_Container.style.width = `${Math.round(ReImage_Background_rect.height * Image_Content_AspectRatio)}px`;
             ReImage_Image_Container.style.height = `${ReImage_Background_rect.height}px`;
         }
-        else if((img_rotate == 90) | (img_rotate == 270)){
+        else if((img_rotate == 90) | (img_rotate == 270) | (img_rotate == -90) | (img_rotate == -270)){
             ReImage_Image_Container.style.width = `${Math.round(ReImage_Background_rect.height * Image_Content_AspectRatio)}px`;
             ReImage_Image_Container.style.height = `${ReImage_Background_rect.width}px`;
         }
@@ -507,18 +507,19 @@ window.addEventListener('resize', ()=>{
     setTimeout(() => {
         Import_Content_and_Adjust();
     }, 1000);
+
 })
 
 RotatePlus_Image.addEventListener('click', ()=>{
     img_rotate += 90;
-    if (img_rotate == 360){
+    if (img_rotate >= 360){
         img_rotate = 0;
     }
     Import_Content_and_Adjust();
 })
 RotateMinus_Image.addEventListener('click', ()=>{
     img_rotate -= 90;
-    if (img_rotate == -360){
+    if (img_rotate <= -360){
         img_rotate = 0;
     }
     Import_Content_and_Adjust();

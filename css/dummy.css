@@ -34,7 +34,7 @@
 }
 #Image_Preview_Container{
     position: absolute;
-    background-color: #00271fec;
+    background-color: #000000e1;
     height: 100%;
     width: 100%;
 }
@@ -45,6 +45,7 @@
 .Link_and_Button_Wrapper{
     width: calc(100vw - 10%);
     height: calc(100vh - 20%);
+    top: calc(10% - 40px);
     max-height: 650px;
     max-width: 420px;
     position: absolute;
