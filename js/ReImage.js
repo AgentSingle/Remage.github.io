@@ -7,6 +7,7 @@ const Preview_Container = document.querySelector("#Image_Preview_Container");
 
 const RotatePlus_Image = document.querySelector("#RotatePlus_Image");
 const RotateMinus_Image = document.querySelector("#RotateMinus_Image");
+const Add_Image = document.querySelector('#Add_Image');
 
 
 let Image_Content = ReImage_Image_Container.firstElementChild,
@@ -86,12 +87,12 @@ async function checkImage(url){
 };
 
 /* Checking if the image is valid. */
-window.addEventListener('load', () =>{
+const checkImageStatus = () =>{
     /* Checking if the image is valid. */
     checkImage(`${ImageUrl}`)
     .then(res =>{
         if (res == true){
-            Initialize_Cropper()
+            Initialize_Cropper();
         }
         else if (res == false){
             console.warn('image not present')
@@ -99,7 +100,23 @@ window.addEventListener('load', () =>{
             return
         }
     }) 
+}
+window.addEventListener('load', () =>{
+    checkImageStatus();
 });
+
+Add_Image.addEventListener('change', ()=>{
+    let file = Add_Image.files;
+    if (file.length > 0){
+        let fileReader = new FileReader();
+        fileReader.onload = function (event){
+            ReImage_Image_Container.firstElementChild.setAttribute('src', event.target.result);
+            ImageUrl = event.target.result;
+            checkImageStatus();
+        }
+        fileReader.readAsDataURL(file[0])
+    }
+})
 
 /* Adding an event listener to the window object. The event listener is listening for the scroll event.
 When the scroll event is triggered, the function is executed. The function is setting the
@@ -144,6 +161,7 @@ const Detect_Moveable_Area = () => {
  * content to fit the screen.
  */
 const Import_Content_and_Adjust = () =>{
+
     /* Getting the scroll height and width of the window. */
     ReImage_Background = document.querySelector('.ReImage_Background');
     ReImage_Cover = document.querySelector('.ReImage_Cover');
@@ -257,6 +275,7 @@ const detect_image_collision = (imageMoveX, imageMoveY)=>{
 const Initialize_Cropper = () =>{
     Import_Content_and_Adjust();
 
+    /* :~~~~~::~~~~~::~~~~~:| HANDLE MOVEMENT OF CROPPER RECTANGLE |:~~~~~::~~~~~::~~~~~: */
     ReImage_Rectangle.addEventListener('pointerdown', cropperPointerDown);
     function cropperPointerDown(e){
         e.preventDefault();
@@ -314,12 +333,14 @@ const Initialize_Cropper = () =>{
             IsCropperMoving = false;
             window.removeEventListener('pointermove', cropperPointermove);
             window.removeEventListener('pointerup', cropperPointerup);
-            /* Drawing an image in a canvas. */
-            drawImage_in_canvas();
+        
+            /* Clip-out a particular part form the large canvas. */
+            clip_the_canvas();
         }
     };
 
 
+    /* :~~~~~::~~~~~::~~~~~:| HANDLE MOVEMENT OF IMAGE |:~~~~~::~~~~~::~~~~~: */
     ReImage_Image_Container.addEventListener('pointerdown', imgPointerDown);
     function imgPointerDown(e){
         IsCropperMoving = false;
@@ -359,12 +380,12 @@ const Initialize_Cropper = () =>{
             IsImageMove = false;
             window.removeEventListener('pointermove', imagePointermove);
             window.removeEventListener('pointerup', imagePointerup);
-            /* Drawing an image in a canvas. */
-            drawImage_in_canvas();
+            
         }
     }
 
 
+    /* :~~~~~::~~~~~::~~~~~:| RESIZE FUNCTION OF THE CROPPER |:~~~~~::~~~~~::~~~~~: */
     /* The above code is a function that is supposed to resize the cropper. */
     for (let ReImage_Mover of ReImage_MoverS){
         ReImage_Mover.addEventListener('pointerdown', moverPD);
@@ -499,6 +520,9 @@ const Initialize_Cropper = () =>{
                 thisMover.removeEventListener('pointermove', moverPM);
                 ReImage_Rectangle.removeEventListener('pointerover', moverPO);
                 window.removeEventListener('pointerup', moverPU);
+
+                /* Clip-out a particular part form the large canvas. */
+                clip_the_canvas();
             }
         }
     }
@@ -529,7 +553,7 @@ RotateMinus_Image.addEventListener('click', ()=>{
 
 
 /* :==================[ DRAW FULL IMAGE ON CANVAS ]======================: */
-let CANVAS = document.querySelector('#Image_Drawing_Canvas');
+const CANVAS = document.querySelector('#Image_Drawing_Canvas');
 
 const drawImage_in_canvas = () =>{
     // DRAWING AN IMAGE INSIDE THE CANVAS
@@ -546,8 +570,7 @@ const drawImage_in_canvas = () =>{
     canvas = CANVAS,
     ctx = canvas.getContext('2d');
     image.src = Image_Content.src
-
-
+    
     image.addEventListener('load', () => {
         ctx.translate(CANVAS.width / 2, CANVAS.height / 2);
         ctx.rotate(img_rotate*Math.PI/180);
@@ -555,14 +578,13 @@ const drawImage_in_canvas = () =>{
             -draw_width/ 2, -draw_height / 2,
             draw_width, draw_height
         );
-
         clip_the_canvas();
     });
 
 }
 
 /* :~~~~~::~~~~~:| CLIP A PART FORM MAIN CANVAS |:~~~~~::~~~~~: */
-let clipping_CANVAS = document.querySelector("#Image_clipping_Canvas");
+const clipping_CANVAS = document.querySelector("#Image_clipping_Canvas");
 const clip_the_canvas = () =>{
     let Image_Content_rect = Image_Content.getBoundingClientRect();
     ReImage_Rectangle_rect = ReImage_Rectangle.getBoundingClientRect();
@@ -590,11 +612,4 @@ const clip_the_canvas = () =>{
         Clipping_CANVAS_height  //Place Height
 
     )
-            
-    /* Converting the canvas to a dataURL. */
-    let dataURL = clipping_CANVAS.toDataURL('image/png');
-    Preview_Container.innerHTML = `<img src="${dataURL}" 
-                                    style="width:${ReImage_Rectangle_rect.width}px;
-                                    height:${ReImage_Rectangle_rect.height}px"
-                                    alt="alterImg">`;
 }

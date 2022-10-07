@@ -71,3 +71,13 @@
     border: none;
     color: #ffffff;
 }
+.Add_Image{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.Add_Image input{
+    display: none;
+}

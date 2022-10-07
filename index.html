@@ -19,12 +19,8 @@
 
                     <!-- The container for the image. -->
                     <div class="ReImage_Image_Container">
-                        <!-- <img src="./img/Animy.jpg"  alt="#" onContextMenu="return false;"> -->
-                        <!-- <img src="./img/Exercize.jpg"  alt="#" onContextMenu="return false;"> -->
+                        <!-- <img src=""  alt="#" onContextMenu="return false;"> -->
                         <img src="./img/GreenNature.jpg"  alt="#" onContextMenu="return false;">
-                        <!-- <img src="./img/madagasker.jpg"  alt="#" onContextMenu="return false;"> -->
-                        <!-- <img src="./img/OceanWomen.jpg"  alt="#" onContextMenu="return false;"> -->
-                        <!-- <img src="./img/red-apple.jpg"  alt="#" onContextMenu="return false;"> -->
                         <!-- <img src="./img/SwimingWomen.jpg"  alt="#" onContextMenu="return false;"> -->
                         <!-- <img src="./img/women-mood-flower.jpg"  alt="#" onContextMenu="return false;"> -->
 
@@ -38,11 +34,6 @@
                     <!-- The cover for the image. -->
                     <div class="ReImage_Cover">
                         <div class="ReImage_Rectangle">
-
-                            <!-- The canvas that is used to draw the image. -->
-                            <div class="canvas_Wrapper">
-                                <canvas id="Image_Drawing_Canvas"></canvas>
-                            </div>
 
                             <!-- Used to create the corners of the rectangle. -->
                             <div class="ReImage_Cropper_Mask">
@@ -69,23 +60,41 @@
                         <!-- WE INSERT FINALIZE IMAGE HERE -->
                     </div>
 
+                    <!-- The canvas that is used to draw the image. -->
+                    <div class="canvas_Wrapper">
+                        <canvas id="Image_Drawing_Canvas"></canvas>
+                    </div>
+
                 </div>
                 
 
                 <!-- The button that will preview the image. -->
                 <div class="Link_and_Button_Wrapper">
                     <div class="buttons_content">
+
                         <button id="RotatePlus_Image">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
                                 <path fill="#FFF" d="M12.5 11.8c.2.2.2.6 0 .9-1.1 1.1-2.8 1.8-4.5 1.8-3.7 0-6.5-2.8-6.5-6.5s3-6.5 6.5-6.5c1.7 0 3.3.7 4.5 1.8l1-1c.4-.4 1-.1 1 .4v3.8c0 .3-.3.6-.6.6h-3.7c-.5 0-.8-.7-.4-1L11 4.9c-.9-.9-1.9-1.3-3-1.3-3 0-5.4 3.1-4 6.2.7 1.6 2.3 2.6 4 2.6 1.2 0 2.2-.4 3-1.3.2-.2.6-.2.8 0l.7.7z"></path>
                             </svg>
                         </button>
+
                         <button id="Preview_Image">Preview Image</button>
+
+                        <div class="Add_Image">
+                            <label for="Add_Image">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15.5" fill="#ffffff">
+                                    <path d="M8.6 6.7H15v2.2H8.6v6.7H6.4V8.8H0V6.7h6.4V0h2.2v6.7z"></path>
+                                </svg>
+                            </label>
+                            <input type="file" id="Add_Image" accept="image/*"/>
+                        </div>
+
                         <button id="RotateMinus_Image">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
                                 <path fill="#FFF" d="M3.5 11.8c-.2.2-.2.6 0 .9 1.1 1.1 2.8 1.8 4.5 1.8 3.7 0 6.5-2.8 6.5-6.5s-3-6.5-6.5-6.5c-1.7 0-3.3.7-4.5 1.8l-1-1c-.4-.4-1-.1-1 .4v3.8c0 .3.3.6.6.6h3.7c.5 0 .8-.7.4-1L5 4.9c.9-.9 1.9-1.3 3-1.3 3 0 5.4 3.1 4 6.2-.7 1.6-2.3 2.6-4 2.6-1.2 0-2.2-.4-3-1.3-.2-.2-.6-.2-.8 0l-.7.7z"></path>
                             </svg>
                         </button>
+
                     </div>
                 </div>
             </div>

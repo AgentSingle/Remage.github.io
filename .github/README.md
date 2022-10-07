@@ -17,6 +17,9 @@
 ### 12] Cropper side resize buttons [YES]
 ### 13] Image resize on-touch [No]
 ### 14] Cropper Return Base-64 data [YES]
-### 14] Rotate image then Crop [YES]
+### 15] Rotate image then Crop [YES]
+### 16] Dynamically add image [YES]
+
+
 
 
