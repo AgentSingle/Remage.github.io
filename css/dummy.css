@@ -23,6 +23,7 @@
 }
 .clipping_canvas_Wrapper{
     display: none;
+    z-index: -10;
 }
 
 .Style_De_Image{
