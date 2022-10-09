@@ -226,7 +226,7 @@ const Import_Content_and_Adjust = () =>{
             let Wd = Math.round((ReImage_Background_rect.width + changeOnScale)* Image_Content_AspectRatio);
             let Vh = (ReImage_Background_rect.width + changeOnScale);
             ReImage_Image_Container.style.width = `${Wd}px`;
-            ReImage_Image_Container.style.height = `${Vh + changeOnScale}px`;
+            ReImage_Image_Container.style.height = `${Vh}px`;
         }
         position_content();
     }
