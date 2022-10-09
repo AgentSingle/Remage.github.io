@@ -50,7 +50,8 @@ let imageTouchX,
     imageMoveX,
     imageMoveY,
     IsImageMove = false,
-    ImageRespectRatio;
+    ImageRespectRatio,
+    changeOnScale = 0;
 
 let moverTouchX,
     moverTouchY,
@@ -87,32 +88,41 @@ async function checkImage(url){
 };
 
 /* Checking if the image is valid. */
-const checkImageStatus = () =>{
-    /* Checking if the image is valid. */
+window.addEventListener('load', () =>{
     checkImage(`${ImageUrl}`)
     .then(res =>{
         if (res == true){
             Initialize_Cropper();
         }
         else if (res == false){
-            console.warn('image not present')
-            // ADD LOGIC LATER
+            console.log('image not present');
             return
         }
-    }) 
-}
-window.addEventListener('load', () =>{
-    checkImageStatus();
+    })
 });
 
+/*
+ * If there is no image file then we attach a new image file
+ */
 Add_Image.addEventListener('change', ()=>{
     let file = Add_Image.files;
     if (file.length > 0){
+        // changeOnScale = 0;
+        // img_rotate = 0;
         let fileReader = new FileReader();
         fileReader.onload = function (event){
             ReImage_Image_Container.firstElementChild.setAttribute('src', event.target.result);
             ImageUrl = event.target.result;
-            checkImageStatus();
+            checkImage(`${ImageUrl}`)
+            .then(res =>{
+                if (res == true){
+                    Import_Content_and_Adjust();
+                }
+                else if (res == false){
+                    console.log('image not present');
+                    return
+                }
+            })
         }
         fileReader.readAsDataURL(file[0])
     }
@@ -160,6 +170,10 @@ const Detect_Moveable_Area = () => {
  * "Import_Content_and_Adjust" is a function that imports the content of the HTML file and adjusts the
  * content to fit the screen.
  */
+/* :~~~~~::~~~~~::~~~~~:| ADJUST PICTURE ACCORDING TO HEIGHT & WIDTH |:~~~~~::~~~~~::~~~~~: */
+// const adjustPicture = () => {
+
+// }
 const Import_Content_and_Adjust = () =>{
 
     /* Getting the scroll height and width of the window. */
@@ -171,6 +185,8 @@ const Import_Content_and_Adjust = () =>{
     detect_cropper_collision(cropperMoveX, cropperMoveY);
     detect_image_collision(imageMoveX, imageMoveY);
     scroll_height = 0, scroll_width = 0;
+    ReImage_Cover.style.transition = `all 0.5s`;
+    // ReImage_Image_Container.style.transition = `none`;
 
 
     /* :~~~~~::~~~~~::~~~~~:| REQUIRE BOUNDING RECTANGLE |:~~~~~::~~~~~::~~~~~: */
@@ -201,12 +217,16 @@ const Import_Content_and_Adjust = () =>{
     height of the image to the height of the background divided by the aspect ratio of the image. */
     if (Image_Content_AspectRatio >= Background_AspectRatio){
         if((img_rotate == 0) | (img_rotate == 180) | (img_rotate == -180)){
-            ReImage_Image_Container.style.width = `${ReImage_Background_rect.width}px`;
-            ReImage_Image_Container.style.height = `${Math.round(ReImage_Background_rect.width / Image_Content_AspectRatio)}px`;
+            let Wd = (ReImage_Background_rect.width + changeOnScale);
+            let Vh = Math.round((ReImage_Background_rect.width + changeOnScale) / Image_Content_AspectRatio);
+            ReImage_Image_Container.style.width = `${Wd}px`;
+            ReImage_Image_Container.style.height = `${Vh}px`;
         }
         else if((img_rotate == 90) | (img_rotate == 270) | (img_rotate == -90) | (img_rotate == -270)){
-            ReImage_Image_Container.style.width = `${Math.round(ReImage_Background_rect.width* Image_Content_AspectRatio)}px`;
-            ReImage_Image_Container.style.height = `${ReImage_Background_rect.width}px`;
+            let Wd = Math.round((ReImage_Background_rect.width + changeOnScale)* Image_Content_AspectRatio);
+            let Vh = (ReImage_Background_rect.width + changeOnScale);
+            ReImage_Image_Container.style.width = `${Wd}px`;
+            ReImage_Image_Container.style.height = `${Vh + changeOnScale}px`;
         }
         position_content();
     }
@@ -215,12 +235,16 @@ const Import_Content_and_Adjust = () =>{
     background. */
     if ((Image_Content_AspectRatio < Background_AspectRatio) & (Image_Content_AspectRatio > 0)){
         if((img_rotate == 0) | (img_rotate == 180) | (img_rotate == -180)){
-            ReImage_Image_Container.style.width = `${Math.round(ReImage_Background_rect.height * Image_Content_AspectRatio)}px`;
-            ReImage_Image_Container.style.height = `${ReImage_Background_rect.height}px`;
+            let Wd = Math.round((ReImage_Background_rect.height + changeOnScale) * Image_Content_AspectRatio);
+            let Vh = (ReImage_Background_rect.height + changeOnScale);
+            ReImage_Image_Container.style.width = `${Wd}px`;
+            ReImage_Image_Container.style.height = `${Vh}px`;
         }
         else if((img_rotate == 90) | (img_rotate == 270) | (img_rotate == -90) | (img_rotate == -270)){
-            ReImage_Image_Container.style.width = `${Math.round(ReImage_Background_rect.width * Image_Content_AspectRatio)}px`;
-            ReImage_Image_Container.style.height = `${ReImage_Background_rect.width}px`;
+            let Wd = Math.round((ReImage_Background_rect.width + changeOnScale) * Image_Content_AspectRatio);
+            let Vh = (ReImage_Background_rect.width + changeOnScale);
+            ReImage_Image_Container.style.width = `${Wd}px`;
+            ReImage_Image_Container.style.height = `${Vh}px`;
         }
         position_content();
     }
@@ -238,7 +262,7 @@ const Import_Content_and_Adjust = () =>{
     BackgroundCenterX = (ReImage_Background_rect.left + ReImage_Background_rect.width/2),
     BackgroundCenterY = (ReImage_Background_rect.top + ReImage_Background_rect.height/2);
     // AMOUNT OF IMAGE CONTRACTION / EXPANSION [RATIO] => ImageRespectRatio
-    ImageRespectRatio = (Image_Content.naturalWidth/ ReImage_Image_Container_rect.width);
+    ImageRespectRatio = (Image_Content.naturalWidth / ReImage_Image_Container_rect.width);
 
     /* Calling the function Detect_Moveable_Area() */
     Detect_Moveable_Area();
@@ -248,7 +272,6 @@ const Import_Content_and_Adjust = () =>{
     RTEmaxRight = RTE_rect.right;
     RTS_rect = RTS.getBoundingClientRect();
     RTSmaxBottom = RTS_rect.bottom;
-
 
     /* Drawing an image in a canvas. */
     drawImage_in_canvas();
@@ -279,6 +302,7 @@ const Initialize_Cropper = () =>{
     ReImage_Rectangle.addEventListener('pointerdown', cropperPointerDown);
     function cropperPointerDown(e){
         e.preventDefault();
+        ReImage_Cover.style.transition = `none`;
         IsCropperMoving = true;
         IsResizing = false;
         cropperTouchX = e.clientX - cropperMoveX;
@@ -344,6 +368,7 @@ const Initialize_Cropper = () =>{
     ReImage_Image_Container.addEventListener('pointerdown', imgPointerDown);
     function imgPointerDown(e){
         IsCropperMoving = false;
+        ReImage_Image_Container.style.transition = `none`;
         IsResizing = false;
         IsImageMove = true;
         imageTouchX = e.clientX - imageMoveX;
@@ -381,7 +406,19 @@ const Initialize_Cropper = () =>{
             window.removeEventListener('pointermove', imagePointermove);
             window.removeEventListener('pointerup', imagePointerup);
             
+            /* Clip-out a particular part form the large canvas. */
+            clip_the_canvas();
         }
+    }
+
+    ReImage_Image_Container.addEventListener('wheel', zoom, { passive: false })
+    function zoom(e){
+        e.preventDefault();
+        let delta = (e.wheelDelta ? e.wheelDelta : -e.deltaY) * 0.4;
+        changeOnScale += delta;
+        changeOnScale = Math.min(Math.max(changeOnScale, 0), (2800));
+        // console.warn(changeOnScale)
+        Import_Content_and_Adjust();
     }
 
 
@@ -392,6 +429,7 @@ const Initialize_Cropper = () =>{
 
         function moverPD(e){
             e.preventDefault();
+            ReImage_Cover.style.transition = `none`;
             let thisMover = e.target;
             moverTouchX = e.clientX;
             moverTouchY = e.clientY;
@@ -557,6 +595,7 @@ const CANVAS = document.querySelector('#Image_Drawing_Canvas');
 
 const drawImage_in_canvas = () =>{
     // DRAWING AN IMAGE INSIDE THE CANVAS
+    ReImage_Image_Container_rect = ReImage_Image_Container.getBoundingClientRect();
     CANVAS.width = ReImage_Image_Container_rect.width * ImageRespectRatio;
     CANVAS.height = ReImage_Image_Container_rect.height * ImageRespectRatio;
     let draw_width = CANVAS.width;
