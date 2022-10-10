@@ -47,8 +47,8 @@ let cropperTouchX,
 
 let imageTouchX,
     imageTouchY,
-    imageMoveX,
-    imageMoveY,
+    imageMoveX = 0,
+    imageMoveY = 0,
     IsImageMove = false,
     ImageRespectRatio,
     changeOnScale = 0;
@@ -107,8 +107,8 @@ window.addEventListener('load', () =>{
 Add_Image.addEventListener('change', ()=>{
     let file = Add_Image.files;
     if (file.length > 0){
-        // changeOnScale = 0;
-        // img_rotate = 0;
+        changeOnScale = 0;
+        img_rotate = 0;
         let fileReader = new FileReader();
         fileReader.onload = function (event){
             ReImage_Image_Container.firstElementChild.setAttribute('src', event.target.result);
@@ -116,6 +116,7 @@ Add_Image.addEventListener('change', ()=>{
             checkImage(`${ImageUrl}`)
             .then(res =>{
                 if (res == true){
+                    imageMoveX = 0, imageMoveY = 0;
                     Import_Content_and_Adjust();
                 }
                 else if (res == false){
@@ -181,7 +182,6 @@ const Import_Content_and_Adjust = () =>{
     ReImage_Cover = document.querySelector('.ReImage_Cover');
     ReImage_Rectangle = document.querySelector('.ReImage_Rectangle');
     cropperMoveX = 0, cropperMoveY = 0;
-    imageMoveX = 0, imageMoveY = 0;
     detect_cropper_collision(cropperMoveX, cropperMoveY);
     detect_image_collision(imageMoveX, imageMoveY);
     scroll_height = 0, scroll_width = 0;
@@ -251,8 +251,11 @@ const Import_Content_and_Adjust = () =>{
     /* :-----:[ CENTER ALL CONTENTS ]:-----: */
     /* It positions the image and the cropper in the center of the screen. */
     function position_content(){
+        // ReImage_Image_Container_rect = ReImage_Image_Container.getBoundingClientRect();
         ReImage_Rectangle.style.left = `calc(50% - ${ReImage_Rectangle_rect.width/2}px)`;
         ReImage_Rectangle.style.top = `calc(50% - ${ReImage_Rectangle_rect.height/2}px)`;
+        // ReImage_Image_Container.style.left = `calc(50% - ${ReImage_Image_Container_rect.width/2}px)`;
+        // ReImage_Image_Container.style.top = `calc(50% - ${ReImage_Image_Container_rect.height/2}px)`;
         Image_Content.style.width = `100%`;
         Image_Content.style.height = `100%`;
     }
@@ -417,7 +420,22 @@ const Initialize_Cropper = () =>{
         let delta = (e.wheelDelta ? e.wheelDelta : -e.deltaY) * 0.4;
         changeOnScale += delta;
         changeOnScale = Math.min(Math.max(changeOnScale, 0), (2800));
-        // console.warn(changeOnScale)
+        /* Limiting the movement of the cropper to the width of the moveable area. */
+        ReImage_Image_Container_rect = ReImage_Image_Container.getBoundingClientRect();
+    
+        let ImdMIN = ((ReImage_Image_Container_rect.width - moveable_area_width)/2);
+        let ImdMAX = ((moveable_area_width - ReImage_Image_Container_rect.width)/2);
+        let ImhMIN = ((ReImage_Image_Container_rect.height - moveable_area_height)/2);
+        let ImhMAX = ((moveable_area_height - ReImage_Image_Container_rect.height)/2);
+        if (changeOnScale != 0){
+            imageMoveX = Math.max( Math.min(imageMoveX, ImdMIN + delta/2), ImdMAX - delta/2);
+            imageMoveY = Math.max(Math.min(imageMoveY, ImhMIN + delta/2), ImhMAX - delta/2);
+        }
+        else if (changeOnScale==0){
+            imageMoveX = 0
+            imageMoveY = 0
+        }
+        /* Limiting the movement of the cropper to the boundaries of the moveable area. */
         Import_Content_and_Adjust();
     }
 
@@ -568,6 +586,7 @@ const Initialize_Cropper = () =>{
 
 /* Reloading the page after 2 seconds of resizing the window. */
 window.addEventListener('resize', ()=>{
+    imageMoveX = 0, imageMoveY = 0;
     setTimeout(() => {
         Import_Content_and_Adjust();
     }, 1000);
@@ -575,18 +594,24 @@ window.addEventListener('resize', ()=>{
 })
 
 RotatePlus_Image.addEventListener('click', ()=>{
+    imageMoveX = 0, imageMoveY = 0;
+    changeOnScale = 0;
     img_rotate += 90;
     if (img_rotate >= 360){
         img_rotate = 0;
     }
     Import_Content_and_Adjust();
+    clip_the_canvas();
 })
 RotateMinus_Image.addEventListener('click', ()=>{
+    imageMoveX = 0, imageMoveY = 0;
+    changeOnScale = 0;
     img_rotate -= 90;
     if (img_rotate <= -360){
         img_rotate = 0;
     }
     Import_Content_and_Adjust();
+    clip_the_canvas();
 })
 
 
